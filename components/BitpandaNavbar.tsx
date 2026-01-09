@@ -538,10 +538,10 @@ export default function BitpandaNavbar() {
               )}
             </div>
 
-            <Link href="/auth/login" className="bp-button bp-button-secondary">
+            <Link href="/auth/signin" className="bp-button bp-button-secondary">
               Log in
             </Link>
-            <Link href="/auth/register" className="bp-button bp-button-primary">
+            <Link href="/auth/signup" className="bp-button bp-button-primary">
               Sign-up
             </Link>
           </div>
@@ -806,14 +806,14 @@ export default function BitpandaNavbar() {
 
               <div className="pt-4 space-y-3">
                 <Link
-                  href="/auth/login"
+                  href="/auth/signin"
                   className="block bp-button bp-button-secondary w-full text-center"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Log in
                 </Link>
                 <Link
-                  href="/auth/register"
+                  href="/auth/signup"
                   className="block bp-button bp-button-primary w-full text-center"
                   onClick={() => setIsMenuOpen(false)}
                 >

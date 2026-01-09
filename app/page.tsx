@@ -209,7 +209,7 @@ export default function Home() {
                 Join over 7 million people investing in 650+ cryptos and 3,000+ digital assets with Bitpanda Pro.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link href="/auth/register" className="bp-button bp-button-primary bp-button-lg">
+                <Link href="/auth/signup" className="bp-button bp-button-primary bp-button-lg">
                   Start investing
                 </Link>
               </div>
@@ -441,7 +441,7 @@ export default function Home() {
               Get started in under 5 minutes • No hidden fees • European regulated • Professional Trading Platform
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/auth/register" className="bp-button bp-button-primary bp-button-lg">
+              <Link href="/auth/signup" className="bp-button bp-button-primary bp-button-lg">
                 Start Trading Now
               </Link>
               <Link href="/tutorials" className="bp-button bp-button-secondary bp-button-lg">
@@ -464,7 +464,7 @@ export default function Home() {
         <div className="bp-container">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-              Questions? We're here for you
+              Questions? We&apos;re here for you
             </h2>
           </div>
         </div>
@@ -614,7 +614,7 @@ export default function Home() {
                 <span className="text-2xl font-bold text-white uppercase">BITPANDA PRO</span>
               </div>
               <p className="text-gray-300 mb-6 text-sm leading-relaxed">
-                Europe's leading cryptocurrency trading platform. Bitpanda Pro is regulated, secure, and trusted by millions of users across the continent. Start your investment journey with confidence.
+                Europe&apos;s leading cryptocurrency trading platform. Bitpanda Pro is regulated, secure, and trusted by millions of users across the continent. Start your investment journey with confidence.
               </p>
               <div className="flex space-x-4">
                 <Link href="#" className="text-gray-400 hover:text-white transition-colors">
@@ -668,7 +668,7 @@ export default function Home() {
 
           <div className="border-t border-gray-800 mt-12 pt-8 text-center">
             <p className="text-sm text-gray-400">
-              © 2024 BITPANDA PRO. All rights reserved. Bitpanda Pro GmbH ve grup şirketleri (Bitpanda Pro) Türkiye'de bankacılık ve finansal hizmetler kanunlarının düzenlediği hiçbir faaliyet için yetkilendirilmemiştir.
+              © 2024 BITPANDA PRO. All rights reserved. Bitpanda Pro GmbH ve grup şirketleri (Bitpanda Pro) Türkiye&apos;de bankacılık ve finansal hizmetler kanunlarının düzenlediği hiçbir faaliyet için yetkilendirilmemiştir.
             </p>
           </div>
         </div>
