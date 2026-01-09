@@ -1,13 +1,24 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { createBrowserClient } from '@supabase/ssr'
 
-export default function OAuthConsentPage() {
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-8 h-8 border-4 border-green-800 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <p className="mt-4 text-gray-600">Loading...</p>
+      </div>
+    </div>
+  )
+}
+
+function OAuthConsentContent() {
   const searchParams = useSearchParams()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -181,5 +192,13 @@ function getScopeDescription(scope: string): string {
   }
   
   return scopeDescriptions[scope] || scope
+}
+
+export default function OAuthConsentPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <OAuthConsentContent />
+    </Suspense>
+  )
 }
 
