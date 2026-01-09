@@ -26,7 +26,7 @@ export default function SignInPage() {
       if (error) {
         setError(error.message)
       } else {
-        router.push('/')
+        router.push('/dashboard')
         router.refresh()
       }
     } catch {
