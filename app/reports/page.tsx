@@ -3,6 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
+import { useAuth } from "@/contexts/AuthContext";
+import { createClient } from "@/lib/supabase/client";
 
 interface ReportItem {
   id: string;
@@ -103,14 +105,55 @@ function ReportItem({ report }: { report: ReportItem }) {
 }
 
 export default function ReportsPage() {
+  const { user: authUser, loading: authLoading } = useAuth();
   const [isClient, setIsClient] = React.useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  const [reportsState, setReportsState] = React.useState<ReportItem[]>(reports);
+  const supabase = createClient();
 
   React.useEffect(() => {
     setIsClient(true);
   }, []);
 
-  if (!isClient) {
+  React.useEffect(() => {
+    if (authLoading || !authUser) {
+      setReportsState(reports);
+      return;
+    }
+
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('reports')
+          .select('*')
+          .eq('user_id', authUser.id)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.warn('Reports table not available, using static data', error);
+          setReportsState(reports);
+        } else if (data && data.length > 0) {
+          const mapped = data.map((row: any) => ({
+            id: String(row.id),
+            title: row.title || 'Report',
+            description: row.description || '',
+            type: row.type || 'custom',
+            date: row.created_at ? new Date(row.created_at).toLocaleDateString() : '',
+            size: row.size || '',
+            icon: row.icon || null,
+          }));
+          setReportsState(mapped as any);
+        } else {
+          setReportsState(reports);
+        }
+      } catch (err) {
+        console.error('Error fetching reports', err);
+        setReportsState(reports);
+      }
+    })();
+  }, [authLoading, authUser, supabase]);
+
+  if (!isClient || authLoading) {
     return (
       <div className="dashboard-loading">
         <div className="loading-spinner"></div>
@@ -166,7 +209,7 @@ export default function ReportsPage() {
         <section className="reports-section">
           <h3 className="section-title">Available Reports</h3>
           <div className="reports-list">
-            {reports.map((report) => (
+            {reportsState.map((report) => (
               <ReportItem key={report.id} report={report} />
             ))}
           </div>

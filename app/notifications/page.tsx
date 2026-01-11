@@ -3,6 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
+import { useAuth } from "@/contexts/AuthContext";
+import { createClient } from "@/lib/supabase/client";
 
 interface Notification {
   id: string;
@@ -133,14 +135,56 @@ function NotificationItem({ notification }: { notification: Notification }) {
 }
 
 export default function NotificationsPage() {
+  const { user: authUser, loading: authLoading } = useAuth();
   const [isClient, setIsClient] = React.useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [filter, setFilter] = React.useState<"all" | "unread">("all");
-  const [notificationsList, setNotificationsList] = React.useState(notifications);
+  const [notificationsList, setNotificationsList] = React.useState<Notification[]>([]);
+  const supabase = createClient();
 
   React.useEffect(() => {
     setIsClient(true);
   }, []);
+
+  React.useEffect(() => {
+    if (authLoading || !authUser) {
+      // not signed in or still loading - show nothing or fallback mock
+      setNotificationsList(notifications);
+      return;
+    }
+
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('notifications')
+          .select('*')
+          .eq('user_id', authUser.id)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.warn('Notifications table not available or query failed, using mock data', error);
+          setNotificationsList(notifications);
+        } else if (data && data.length > 0) {
+          // map rows to Notification shape as needed
+          const mapped = data.map((row: any) => ({
+            id: String(row.id),
+            type: row.type || 'info',
+            title: row.title || 'Notification',
+            message: row.message || '',
+            time: row.created_at ? new Date(row.created_at).toLocaleString() : '',
+            read: !!row.read,
+            action: row.action || undefined,
+          }));
+          setNotificationsList(mapped);
+        } else {
+          setNotificationsList(notifications);
+        }
+      } catch (err) {
+        console.error('Failed to load notifications', err);
+        setNotificationsList(notifications);
+      }
+    })();
+  }, [authLoading, authUser, supabase]);
 
   const unreadCount = notificationsList.filter(n => !n.read).length;
 
@@ -149,11 +193,21 @@ export default function NotificationsPage() {
     return true;
   });
 
-  const markAllAsRead = () => {
+  const markAllAsRead = async () => {
     setNotificationsList(prev => prev.map(n => ({ ...n, read: true })));
+    if (!authUser) return;
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ read: true })
+        .eq('user_id', authUser.id);
+      if (error) console.warn('Could not bulk mark notifications as read on server', error);
+    } catch (err) {
+      console.error('Error updating notifications', err);
+    }
   };
 
-  if (!isClient) {
+  if (!isClient || authLoading) {
     return (
       <div className="dashboard-loading">
         <div className="loading-spinner"></div>

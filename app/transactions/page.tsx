@@ -3,6 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
+import { useAuth } from "@/contexts/AuthContext";
+import { createClient } from "@/lib/supabase/client";
 
 interface Transaction {
   id: string;
@@ -153,21 +155,62 @@ function TransactionItem({ transaction }: { transaction: Transaction }) {
 }
 
 export default function TransactionsPage() {
+  const { user: authUser, loading: authLoading } = useAuth();
   const [isClient, setIsClient] = React.useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [filter, setFilter] = React.useState<string>("all");
   const [dateRange, setDateRange] = React.useState<string>("all");
+  const [transactionsState, setTransactionsState] = React.useState<Transaction[]>(transactions);
+  const supabase = createClient();
 
   React.useEffect(() => {
     setIsClient(true);
   }, []);
 
-  const filteredTransactions = transactions.filter((t) => {
+  React.useEffect(() => {
+    if (authLoading || !authUser) {
+      setTransactionsState(transactions);
+      return;
+    }
+
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', authUser.id)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.warn('Transactions table not available, using mock data', error);
+          setTransactionsState(transactions);
+        } else if (data && data.length > 0) {
+          const mapped = data.map((row: any) => ({
+            id: String(row.id),
+            type: row.type || 'transfer',
+            asset: row.asset || 'USD',
+            amount: row.amount || '',
+            value: row.value || '',
+            date: row.date || new Date(row.created_at).toLocaleString(),
+            status: row.status || 'completed',
+          }));
+          setTransactionsState(mapped);
+        } else {
+          setTransactionsState(transactions);
+        }
+      } catch (err) {
+        console.error('Failed to fetch transactions', err);
+        setTransactionsState(transactions);
+      }
+    })();
+  }, [authLoading, authUser, supabase]);
+
+  const filteredTransactions = transactionsState.filter((t) => {
     if (filter !== "all" && t.type !== filter) return false;
     return true;
   });
 
-  if (!isClient) {
+  if (!isClient || authLoading) {
     return (
       <div className="dashboard-loading">
         <div className="loading-spinner"></div>

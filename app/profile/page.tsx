@@ -3,6 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
+import { useAuth } from "@/contexts/AuthContext";
+import { createClient } from "@/lib/supabase/client";
 
 interface ListItemProps {
   label: string;
@@ -42,41 +44,134 @@ function ListItem({ label, value, icon, href, onClick, danger }: ListItemProps) 
   return <div className="list-item">{content}</div>;
 }
 
-// Mock user data - in real app this comes from auth context
-const mockUser = {
-  name: "John Doe",
-  email: "john.doe@example.com",
-  phone: "+43 123 456789",
-  kycStatus: "pending" as "pending" | "verified",
-  memberSince: "January 2024",
-  accountType: "Personal",
-};
-
 export default function ProfilePage() {
+  const { user: authUser, loading: authLoading } = useAuth();
   const [isClient, setIsClient] = React.useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const [user, setUser] = React.useState(mockUser);
+  const [profile, setProfile] = React.useState<any | null>(null);
+  const supabase = createClient();
 
   React.useEffect(() => {
     setIsClient(true);
-    // Simulate fetching user data
-    setUser({
-      name: "John Doe",
-      email: "john.doe@example.com",
-      phone: "+43 123 456789",
-      kycStatus: "verified", // Change to "pending" to test unverified state
-      memberSince: "January 2024",
-      accountType: "Personal",
-    });
   }, []);
 
-  if (!isClient) {
+  React.useEffect(() => {
+    if (authLoading || !authUser) return;
+
+    // Fetch profile from profiles table, fallback to auth user
+    (async () => {
+      try {
+        const { data, error } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
+        if (error) {
+          console.warn('Could not fetch profile, falling back to auth user', error);
+          setProfile({
+            name: authUser.user_metadata?.full_name || authUser.email,
+            email: authUser.email,
+            phone: authUser.user_metadata?.phone || '',
+            kycStatus: authUser.user_metadata?.kycStatus || 'pending',
+            memberSince: authUser.user_metadata?.memberSince || '',
+            accountType: authUser.user_metadata?.accountType || 'Personal',
+          });
+        } else if (data) {
+          setProfile({
+            name: data.full_name || authUser.email,
+            email: authUser.email,
+            phone: data.phone || '',
+            kycStatus: (data.kyc_status as 'pending' | 'verified') || 'pending',
+            memberSince: data.created_at ? new Date(data.created_at).toLocaleString('default', { month: 'long', year: 'numeric' }) : '',
+            accountType: data.account_type || 'Personal',
+            avatar_url: data.avatar_url || undefined,
+          });
+        } else {
+          // Not found, use auth data
+          setProfile({
+            name: authUser.user_metadata?.full_name || authUser.email,
+            email: authUser.email,
+            phone: authUser.user_metadata?.phone || '',
+            kycStatus: authUser.user_metadata?.kycStatus || 'pending',
+            memberSince: authUser.user_metadata?.memberSince || '',
+            accountType: authUser.user_metadata?.accountType || 'Personal',
+          });
+        }
+      } catch (err) {
+        console.error('Profile fetch failed', err);
+        setProfile({
+          name: authUser.user_metadata?.full_name || authUser.email,
+          email: authUser.email,
+          phone: authUser.user_metadata?.phone || '',
+          kycStatus: authUser.user_metadata?.kycStatus || 'pending',
+          memberSince: authUser.user_metadata?.memberSince || '',
+          accountType: authUser.user_metadata?.accountType || 'Personal',
+        });
+      }
+    })();
+  }, [authLoading, authUser, supabase]);
+
+  if (!isClient || authLoading) {
     return (
       <div className="dashboard-loading">
         <div className="loading-spinner"></div>
       </div>
     );
   }
+
+  if (!authUser) {
+    return (
+      <div className="dashboard-container">
+        <div className="dashboard-app">
+          <p>Please sign in to view your profile.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const [editing, setEditing] = React.useState(false);
+  const [form, setForm] = React.useState({ name: '', phone: '', accountType: '' });
+  const [saving, setSaving] = React.useState(false);
+  const [statusMessage, setStatusMessage] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (profile) {
+      setForm({
+        name: profile.name || '',
+        phone: profile.phone || '',
+        accountType: profile.accountType || 'Personal',
+      });
+    }
+  }, [profile]);
+
+  const handleSave = async () => {
+    if (!authUser) return;
+    setSaving(true);
+    setStatusMessage(null);
+    try {
+      const payload = {
+        id: authUser.id,
+        full_name: form.name,
+        phone: form.phone,
+        account_type: form.accountType,
+        updated_at: new Date().toISOString(),
+      };
+
+      const { error: upsertError } = await supabase.from('profiles').upsert(payload, { returning: 'minimal' });
+      if (upsertError) throw upsertError;
+
+      // Also update auth user metadata (display name)
+      const { error: authErr } = await supabase.auth.updateUser({ data: { full_name: form.name } });
+      if (authErr) console.warn('Could not update auth user metadata', authErr);
+
+      // Update local UI
+      setProfile((prev: any) => ({ ...(prev || {}), name: form.name, phone: form.phone, accountType: form.accountType }));
+      setEditing(false);
+      setStatusMessage('Profile saved');
+    } catch (err) {
+      console.error('Save failed', err);
+      setStatusMessage('Could not save profile.');
+    } finally {
+      setSaving(false);
+      setTimeout(() => setStatusMessage(null), 3000);
+    }
+  };
 
   return (
     <div className="dashboard-container">
@@ -92,30 +187,46 @@ export default function ProfilePage() {
             <span className="header-eyebrow">ACCOUNT</span>
             <div className="header-title">Profile</div>
           </div>
-          <button className="sync-btn" onClick={() => setIsSidebarOpen(true)}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            {statusMessage && <span style={{ color: 'var(--color-neutrals-text-secondary)', fontSize: 13 }}>{statusMessage}</span>}
+            {!editing ? (
+              <button className="bp-button bp-button-secondary" onClick={() => setEditing(true)}>Edit</button>
+            ) : (
+              <>
+                <button className="bp-button" onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save'}</button>
+                <button className="bp-button bp-button-secondary" onClick={() => { setEditing(false); setForm({ name: profile?.name || '', phone: profile?.phone || '', accountType: profile?.accountType || 'Personal' }); }}>Cancel</button>
+              </>
+            )}
+            <button className="sync-btn" onClick={() => setIsSidebarOpen(true)}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+          </div>
         </header>
 
         {/* PROFILE CARD */}
         <section className="profile-card">
           <div className="profile-avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
+            {profile?.avatar_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={profile.avatar_url} alt={profile.name} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            )}
           </div>
           <div className="profile-info">
-            <h2 className="profile-name">{user.name}</h2>
-            <p className="profile-email">{user.email}</p>
+            <h2 className="profile-name">{profile?.name || authUser.email}</h2>
+            <p className="profile-email">{profile?.email || authUser.email}</p>
             <div className="profile-meta">
-              <span>Member since {user.memberSince}</span>
+              <span>Member since {profile?.memberSince || '—'}</span>
               <span className="dot">•</span>
-              <span>{user.accountType}</span>
+              <span>{profile?.accountType || 'Personal'}</span>
             </div>
           </div>
         </section>
@@ -124,7 +235,7 @@ export default function ProfilePage() {
         <section className="kyc-section">
           <h3 className="section-title">Identity Verification</h3>
           <div className="kyc-card">
-            {user.kycStatus === "verified" ? (
+            {profile?.kycStatus === "verified" ? (
               <div className="kyc-verified">
                 <div className="kyc-icon verified">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -165,35 +276,67 @@ export default function ProfilePage() {
         <section className="info-section">
           <h3 className="section-title">Personal Information</h3>
           <div className="list-card">
-            <ListItem
-              label="Full Name"
-              value={user.name}
-              icon={
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-              }
-            />
-            <ListItem
-              label="Email"
-              value={user.email}
-              icon={
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                  <polyline points="22,6 12,13 2,6" />
-                </svg>
-              }
-            />
-            <ListItem
-              label="Phone"
-              value={user.phone}
-              icon={
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                </svg>
-              }
-            />
+            {editing ? (
+              <div>
+                <div className="form-group">
+                  <label className="form-label">Full name</label>
+                  <input
+                    className="form-input"
+                    value={form.name}
+                    onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
+                    placeholder="Full name"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Phone</label>
+                  <input
+                    className="form-input"
+                    value={form.phone}
+                    onChange={(e) => setForm((s) => ({ ...s, phone: e.target.value }))}
+                    placeholder="Phone"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Account type</label>
+                  <select className="form-input" value={form.accountType} onChange={(e) => setForm((s) => ({ ...s, accountType: e.target.value }))}>
+                    <option>Personal</option>
+                    <option>Business</option>
+                  </select>
+                </div>
+              </div>
+            ) : (
+              <>
+                <ListItem
+                  label="Full Name"
+                  value={profile?.name || authUser.email}
+                  icon={
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  }
+                />
+                <ListItem
+                  label="Email"
+                  value={profile?.email || authUser.email}
+                  icon={
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                      <polyline points="22,6 12,13 2,6" />
+                    </svg>
+                  }
+                />
+                <ListItem
+                  label="Phone"
+                  value={profile?.phone || '—'}
+                  icon={
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                  }
+                />
+              </>
+            )}
           </div>
         </section>
 

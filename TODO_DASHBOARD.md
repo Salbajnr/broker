@@ -1,66 +1,60 @@
-# TODO Dashboard Styling - Referenced Pages
+# Dashboard Enhancement Plan
 
-## Task: Style all referenced pages in menu bar
+## Task: Populate dashboard with more content and attractive displays
 
-### Pages to Style:
-- [x] Analyze existing pages and identify missing styles
-- [ ] Add Profile page styles
-- [ ] Add Settings page styles  
-- [ ] Add Notifications page styles
-- [ ] Add Support page styles
-- [ ] Add Transactions page styles
-- [ ] Add Reports page styles
-- [ ] Add Statement page styles
+### Files to Modify:
+1. `/workspaces/broker/app/dashboard/page.tsx` - Main dashboard page
+2. `/workspaces/broker/components/CurrencyCard.tsx` - New component for currency display
+3. `/workspaces/broker/components/MarketOverview.tsx` - New component for market overview
+4. `/workspaces/broker/components/TransactionsList.tsx` - New component for transactions
 
-### Missing CSS Classes:
+### Changes to Implement:
 
-**Profile Page:**
-- .profile-card, .profile-avatar, .profile-info
-- .profile-name, .profile-email, .profile-meta
-- .kyc-section, .kyc-card, .kyc-verified, .kyc-pending
-- .kyc-icon, .kyc-status, .kyc-info, .kyc-button
-- .list-item styles
+## Phase 1: Quick Actions Expansion
+- [ ] Add more quick action cards (Buy, Sell, Swap, Deposit, Withdraw, Staking)
+- [ ] Add icons for each action
+- [ ] Maintain 2-column grid layout
 
-**Settings Page:**
-- .settings-section, .settings-card
-- .setting-item, .setting-item-left/right
-- .setting-item-icon, .setting-item-text
-- .setting-item-value, .toggle-switch
+## Phase 2: Market Overview Section
+- [ ] Add market overview section with key metrics
+- [ ] Display: Market Cap, 24h Volume, Top Gainer, Top Loser
+- [ ] Professional card design
 
-**Notifications Page:**
-- .notification-item, .notification-icon
-- .notification-content, .notification-header
-- .notification-time, .notification-action
-- .unread-badge, .mark-read-button
-- .filter-tabs, .filter-tab, .tab-badge
-- .empty-state, .notification-settings
+## Phase 3: Currency List Section (Main Feature)
+- [ ] Create CurrencyCard component
+- [ ] Display popular cryptocurrencies:
+  - Bitcoin (BTC)
+  - Ethereum (ETH)
+  - Binance Coin (BNB)
+  - Solana (SOL)
+  - Ripple (XRP)
+  - Cardano (ADA)
+- [ ] Show: Current price, 24h change %, market cap
+- [ ] Add mini sparkline charts for each currency
 
-**Support Page:**
-- .support-search, .support-actions
-- .support-actions-grid, .support-action-card
-- .support-action-icon, .support-faqs
-- .faq-item, .faq-question, .faq-answer
-- .support-contact, .support-contact-card
-- .support-contact-info, .contact-item
-- .modal-overlay, .modal-content
+## Phase 4: Expand Top Positions
+- [ ] Add more positions to the list (BNB, SOL, XRP, ADA)
+- [ ] Include amount and value for each
+- [ ] Add positive/negative indicators
 
+## Phase 5: Add Watchlist Section
+- [ ] Quick access to favorite assets
+- [ ] Simple list with price and change
 
-- .modal-header, .modal-body, .modal-footer
+## Phase 6: Add Recent Transactions
+- [ ] Expand the activity section with actual transaction types
+- [ ] Add: Buy, Sell, Deposit, Withdrawal, Transfer
 
-**Transactions Page:**
-- .transaction-filters, .transactions-section
-- .transactions-list, .transaction-item
-- .transaction-left/right, .transaction-icon
-- .transaction-info, .transaction-asset
-- .transaction-date, .transaction-right
-- .transaction-amount, .transaction-value
-- .transaction-status, .export-section
-- .export-button
+### Design Guidelines:
+- Maintain Bitpanda green color scheme (#0f9d58, #2cec9a)
+- Keep glassmorphism effects
+- Consistent border-radius (22px-26px)
+- Mobile-responsive design
+- Dark mode support
 
-**Reports Page:**
-- .generate-report, .generate-report-card
-- .generate-icon, .generate-info
-- .generate-button, .reports-section
-
-I'll continue expanding the styling for the reports section, focusing on creating consistent and visually appealing design elements across all pages. The goal is to develop a cohesive visual language that enhances user experience and maintains a professional interface.
+### Testing:
+- [ ] Verify all cards render correctly
+- [ ] Test dark mode compatibility
+- [ ] Ensure responsive layout on mobile
+- [ ] Check all icons and images load properly
 
