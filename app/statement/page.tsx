@@ -58,7 +58,7 @@ export default function StatementPage() {
           console.warn('Transactions table is not available or query failed. Falling back to mock data.', error);
           setStatementDataState(statementData);
         } else if (data && data.length > 0) {
-          const mapped = data.map((row: any) => ({
+          const mapped: StatementItem[] = data.map((row: any) => ({
             id: String(row.id),
             date: row.date || new Date(row.created_at).toLocaleDateString(),
             description: row.description || row.type || 'Transaction',
