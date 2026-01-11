@@ -4080,7 +4080,7 @@ h2 {
 
 .market-list-header {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 40px;
   gap: 8px;
   padding: 10px 14px;
   font-size: 10px;
@@ -4098,13 +4098,14 @@ h2 {
 
 .market-row {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 40px;
   gap: 8px;
   align-items: center;
   padding: 12px 14px;
   border-bottom: 1px solid var(--border);
   cursor: pointer;
   transition: background var(--transition-fast);
+  position: relative;
 }
 
 .market-row:last-child {

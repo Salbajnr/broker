@@ -274,12 +274,14 @@ export default function MarketsPage() {
                     toggleFavorite(market.id);
                   }}
                   style={{ 
-                    position: "absolute", 
-                    right: 100, 
                     background: "none", 
                     border: "none",
                     cursor: "pointer",
-                    color: favorites.includes(market.id) ? "#0f9d58" : "#ccc"
+                    color: favorites.includes(market.id) ? "#0f9d58" : "#ccc",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "4px"
                   }}
                 >
                   <svg viewBox="0 0 24 24" fill={favorites.includes(market.id) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" style={{ width: 16, height: 16 }}>
