@@ -49,12 +49,29 @@ export default function ProfilePage() {
   const [isClient, setIsClient] = React.useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [profile, setProfile] = React.useState<any | null>(null);
+  const [editing, setEditing] = React.useState(false);
+  const [form, setForm] = React.useState({ name: '', phone: '', accountType: '' });
+  const [saving, setSaving] = React.useState(false);
+  const [statusMessage, setStatusMessage] = React.useState<string | null>(null);
   const supabase = createClient();
 
+  // Effect to mark client-side hydration complete
   React.useEffect(() => {
     setIsClient(true);
   }, []);
 
+  // Effect to populate form when profile is loaded
+  React.useEffect(() => {
+    if (profile) {
+      setForm({
+        name: profile.name || '',
+        phone: profile.phone || '',
+        accountType: profile.accountType || 'Personal',
+      });
+    }
+  }, [profile]);
+
+  // Effect to fetch profile data
   React.useEffect(() => {
     if (authLoading || !authUser) return;
 
@@ -107,6 +124,7 @@ export default function ProfilePage() {
     })();
   }, [authLoading, authUser, supabase]);
 
+  // Early returns after all hooks
   if (!isClient || authLoading) {
     return (
       <div className="dashboard-loading">
@@ -125,21 +143,6 @@ export default function ProfilePage() {
     );
   }
 
-  const [editing, setEditing] = React.useState(false);
-  const [form, setForm] = React.useState({ name: '', phone: '', accountType: '' });
-  const [saving, setSaving] = React.useState(false);
-  const [statusMessage, setStatusMessage] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    if (profile) {
-      setForm({
-        name: profile.name || '',
-        phone: profile.phone || '',
-        accountType: profile.accountType || 'Personal',
-      });
-    }
-  }, [profile]);
-
   const handleSave = async () => {
     if (!authUser) return;
     setSaving(true);
@@ -153,7 +156,7 @@ export default function ProfilePage() {
         updated_at: new Date().toISOString(),
       };
 
-      const { error: upsertError } = await supabase.from('profiles').upsert(payload, { returning: 'minimal' });
+      const { error: upsertError } = await supabase.from('profiles').upsert(payload);
       if (upsertError) throw upsertError;
 
       // Also update auth user metadata (display name)
