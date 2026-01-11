@@ -11,8 +11,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import CurrencyCard from "@/components/CurrencyCard";
 import MarketOverview from "@/components/MarketOverview";
 import TransactionsList from "@/components/TransactionsList";
+import NotificationBadge from "@/components/NotificationBadge";
+import StakingCard from "@/components/StakingCard";
+import PerformanceChart from "@/components/PerformanceChart";
 
-// Portfolio data - in a real app, this would come from an API
+// Portfolio data
 const portfolioData = {
   totalValue: "13,36",
   currency: "€",
@@ -20,7 +23,7 @@ const portfolioData = {
   changePeriod: "in 1 Tag",
 };
 
-// Enhanced Quick actions data
+// Quick actions data
 const quickActions = [
   {
     title: "Verfügbares Guthaben",
@@ -47,24 +50,12 @@ const quickActions = [
   },
 ];
 
-// Portfolio Actions (Buy, Sell, Swap, Deposit)
+// Portfolio Actions
 const portfolioActions = [
-  {
-    icon: "buy",
-    label: "Kaufen",
-  },
-  {
-    icon: "sell",
-    label: "Verkaufen",
-  },
-  {
-    icon: "swap",
-    label: "Tauschen",
-  },
-  {
-    icon: "deposit",
-    label: "Einzahlen",
-  },
+  { icon: "buy", label: "Kaufen" },
+  { icon: "sell", label: "Verkaufen" },
+  { icon: "swap", label: "Tauschen" },
+  { icon: "deposit", label: "Einzahlen" },
 ];
 
 // Allocation data
@@ -78,124 +69,34 @@ const allocationData = [
   },
 ];
 
-// Enhanced Top positions data
+// Top positions
 const topPositions = [
-  {
-    icon: "btc" as const,
-    name: "Bitcoin",
-    label: "BTC · Spot",
-    amount: "0,0000 BTC",
-    pill: "-1,2%",
-    negative: true,
-  },
-  {
-    icon: "eth" as const,
-    name: "Ethereum",
-    label: "ETH · Spot",
-    amount: "0,0000 ETH",
-    pill: "0,0%",
-    negative: false,
-  },
-  {
-    icon: "bnb" as const,
-    name: "Binance Coin",
-    label: "BNB · Spot",
-    amount: "0,0000 BNB",
-    pill: "+2,4%",
-    negative: false,
-  },
-  {
-    icon: "sol" as const,
-    name: "Solana",
-    label: "SOL · Spot",
-    amount: "0,0000 SOL",
-    pill: "-0,8%",
-    negative: true,
-  },
-  {
-    icon: "xrp" as const,
-    name: "Ripple",
-    label: "XRP · Spot",
-    amount: "0,0000 XRP",
-    pill: "+1,5%",
-    negative: false,
-  },
-  {
-    icon: "ada" as const,
-    name: "Cardano",
-    label: "ADA · Spot",
-    amount: "0,0000 ADA",
-    pill: "-3,2%",
-    negative: true,
-  },
+  { icon: "btc" as const, name: "Bitcoin", label: "BTC · Spot", amount: "0,0000 BTC", pill: "-1,2%", negative: true },
+  { icon: "eth" as const, name: "Ethereum", label: "ETH · Spot", amount: "0,0000 ETH", pill: "0,0%", negative: false },
+  { icon: "bnb" as const, name: "Binance Coin", label: "BNB · Spot", amount: "0,0000 BNB", pill: "+2,4%", negative: false },
+  { icon: "sol" as const, name: "Solana", label: "SOL · Spot", amount: "0,0000 SOL", pill: "-0,8%", negative: true },
+  { icon: "xrp" as const, name: "Ripple", label: "XRP · Spot", amount: "0,0000 XRP", pill: "+1,5%", negative: false },
+  { icon: "ada" as const, name: "Cardano", label: "ADA · Spot", amount: "0,0000 ADA", pill: "-3,2%", negative: true },
 ];
 
-// Currency list data
+// Currency list
 const currencies = [
-  {
-    name: "Bitcoin",
-    symbol: "BTC",
-    price: "66.234,50 €",
-    change: "2,34%",
-    changeValue: "+1.512 €",
-    marketCap: "1,3 B€",
-    iconColor: "#F7931A",
-  },
-  {
-    name: "Ethereum",
-    symbol: "ETH",
-    price: "3.261,80 €",
-    change: "1,87%",
-    changeValue: "+59,80 €",
-    marketCap: "392 B€",
-    iconColor: "#627EEA",
-  },
-  {
-    name: "Binance Coin",
-    symbol: "BNB",
-    price: "582,40 €",
-    change: "4,21%",
-    changeValue: "+23,50 €",
-    marketCap: "87 B€",
-    iconColor: "#F3BA2F",
-  },
-  {
-    name: "Solana",
-    symbol: "SOL",
-    price: "156,72 €",
-    change: "-0,94%",
-    changeValue: "-1,49 €",
-    marketCap: "72 B€",
-    iconColor: "#9945FF",
-  },
-  {
-    name: "Ripple",
-    symbol: "XRP",
-    price: "0,62 €",
-    change: "3,45%",
-    changeValue: "+0,02 €",
-    marketCap: "35 B€",
-    iconColor: "#23292F",
-  },
-  {
-    name: "Cardano",
-    symbol: "ADA",
-    price: "0,38 €",
-    change: "-2,12%",
-    changeValue: "-0,01 €",
-    marketCap: "13 B€",
-    iconColor: "#0033AD",
-  },
+  { name: "Bitcoin", symbol: "BTC", price: "66.234,50 €", change: "2,34%", changeValue: "+1.512 €", marketCap: "1,3 B€", iconColor: "#F7931A", isPositive: true },
+  { name: "Ethereum", symbol: "ETH", price: "3.261,80 €", change: "1,87%", changeValue: "+59,80 €", marketCap: "392 B€", iconColor: "#627EEA", isPositive: true },
+  { name: "Binance Coin", symbol: "BNB", price: "582,40 €", change: "4,21%", changeValue: "+23,50 €", marketCap: "87 B€", iconColor: "#F3BA2F", isPositive: true },
+  { name: "Solana", symbol: "SOL", price: "156,72 €", change: "-0,94%", changeValue: "-1,49 €", marketCap: "72 B€", iconColor: "#9945FF", isPositive: false },
+  { name: "Ripple", symbol: "XRP", price: "0,62 €", change: "3,45%", changeValue: "+0,02 €", marketCap: "35 B€", iconColor: "#23292F", isPositive: true },
+  { name: "Cardano", symbol: "ADA", price: "0,38 €", change: "-2,12%", changeValue: "-0,01 €", marketCap: "13 B€", iconColor: "#0033AD", isPositive: false },
 ];
 
-// Watchlist data
+// Watchlist
 const watchlist = [
   { name: "Bitcoin", symbol: "BTC", price: "66.234,50 €", change: "+2,34%", isPositive: true, iconColor: "#F7931A" },
   { name: "Ethereum", symbol: "ETH", price: "3.261,80 €", change: "+1,87%", isPositive: true, iconColor: "#627EEA" },
   { name: "Solana", symbol: "SOL", price: "156,72 €", change: "-0,94%", isPositive: false, iconColor: "#9945FF" },
 ];
 
-// Market overview data
+// Market overview
 const marketOverviewData = {
   marketCap: "2,45 B€",
   marketCapChange: "+2,3%",
@@ -208,18 +109,24 @@ const marketOverviewData = {
   fearGreedLabel: "Gier",
 };
 
+// Notifications
+const notifications = [
+  { id: 1, title: "BTC reached new daily high", time: "2 min ago", unread: true },
+  { id: 2, title: "Your order has been executed", time: "1 hour ago", unread: true },
+  { id: 3, title: "Staking rewards distributed", time: "3 hours ago", unread: true },
+];
+
 export default function DashboardPage() {
   const { user, loading } = useAuth();
   const [isClient, setIsClient] = React.useState(false);
   const [activeRange, setActiveRange] = React.useState("1D");
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  const [notificationCount, setNotificationCount] = React.useState(3);
 
   React.useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Get user's display name from email or user metadata
-  // Must be called unconditionally at top level (React hooks rule)
   const userName = React.useMemo(() => {
     if (user?.user_metadata?.full_name) {
       return user.user_metadata.full_name;
@@ -230,7 +137,6 @@ export default function DashboardPage() {
     return "User";
   }, [user]);
 
-  // Handle hydration mismatch by rendering loading state until mounted
   if (!isClient || loading) {
     return (
       <div className="dashboard-loading">
@@ -244,6 +150,14 @@ export default function DashboardPage() {
       <div className="dashboard-app">
         {/* HEADER */}
         <DashboardHeader userName={userName} />
+
+        {/* HEADER ACTIONS */}
+        <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+          <NotificationBadge 
+            count={notificationCount} 
+            onClick={() => {}} 
+          />
+        </div>
 
         {/* PORTFOLIO CARD */}
         <section className="portfolio">
@@ -267,7 +181,6 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* CHART */}
             <PortfolioChart
               activeRange={activeRange}
               onRangeChange={setActiveRange}
@@ -328,6 +241,21 @@ export default function DashboardPage() {
           ))}
         </section>
 
+        {/* PERFORMANCE CHART */}
+        <PerformanceChart 
+          portfolioValue={1336}
+          portfolioChange={5.42}
+          benchmarkValue={1336}
+          benchmarkChange={3.21}
+        />
+
+        {/* STAKING CARD */}
+        <StakingCard 
+          totalStaked={1250.50}
+          apy={12.5}
+          rewards={45.80}
+        />
+
         {/* MARKET OVERVIEW */}
         <MarketOverview
           marketCap={marketOverviewData.marketCap}
@@ -359,7 +287,7 @@ export default function DashboardPage() {
               changeValue={currency.changeValue}
               marketCap={currency.marketCap}
               iconColor={currency.iconColor}
-              isPositive={parseFloat(currency.change) >= 0}
+              isPositive={currency.isPositive}
             />
           ))}
         </section>
@@ -432,10 +360,8 @@ export default function DashboardPage() {
         <TransactionsList maxItems={4} />
       </div>
 
-      {/* SIDEBAR */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-      {/* BOTTOM NAVIGATION */}
       <BottomNav
         onMenuClick={() => setIsSidebarOpen(true)}
         isMenuActive={isSidebarOpen}
