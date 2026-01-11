@@ -1,36 +1,66 @@
-# Dashboard Redesign TODO
+# TODO Dashboard Styling - Referenced Pages
 
-## Phase 1: Component Creation
-- [x] Create ThemeToggle component with sun/moon icons
-- [x] Create BottomNav component with professional SVG icons
-- [x] Create PortfolioChart component with animated SVG line chart
-- [x] Create QuickActionsCard component
-- [x] Create ListRow component for allocation/positions
-- [x] Create DashboardHeader component with user name
+## Task: Style all referenced pages in menu bar
 
-## Phase 2: Dashboard Page
-- [x] Rewrite app/dashboard/page.tsx with new design
-- [x] Display user's name from AuthContext
-- [x] Integrate theme toggle
+### Pages to Style:
+- [x] Analyze existing pages and identify missing styles
+- [ ] Add Profile page styles
+- [ ] Add Settings page styles  
+- [ ] Add Notifications page styles
+- [ ] Add Support page styles
+- [ ] Add Transactions page styles
+- [ ] Add Reports page styles
+- [ ] Add Statement page styles
 
-## Phase 3: Styling
-- [x] Add custom CSS variables to globals.css
-- [x] Implement glassmorphism effects
-- [x] Add smooth animations
-- [x] Add dark mode support
+### Missing CSS Classes:
 
-## Phase 4: Testing
-- [x] Verify no TypeScript errors - Build successful ✓
-- [ ] Test theme toggle functionality
-- [ ] Verify user name displays correctly
+**Profile Page:**
+- .profile-card, .profile-avatar, .profile-info
+- .profile-name, .profile-email, .profile-meta
+- .kyc-section, .kyc-card, .kyc-verified, .kyc-pending
+- .kyc-icon, .kyc-status, .kyc-info, .kyc-button
+- .list-item styles
 
-## Completed Changes:
-✓ User's name displays instead of "BITPANDA PRO"
-✓ Theme toggle button replaces sync button with proper SVG icons
-✓ All icons are professional SVG vectors (no emojis)
-✓ Full glassmorphism design with soft shadows
-✓ Dark mode support with CSS custom properties
-✓ Mobile-first responsive design
-✓ Smooth animations and transitions
-✓ Bottom navigation bar with active states
+**Settings Page:**
+- .settings-section, .settings-card
+- .setting-item, .setting-item-left/right
+- .setting-item-icon, .setting-item-text
+- .setting-item-value, .toggle-switch
+
+**Notifications Page:**
+- .notification-item, .notification-icon
+- .notification-content, .notification-header
+- .notification-time, .notification-action
+- .unread-badge, .mark-read-button
+- .filter-tabs, .filter-tab, .tab-badge
+- .empty-state, .notification-settings
+
+**Support Page:**
+- .support-search, .support-actions
+- .support-actions-grid, .support-action-card
+- .support-action-icon, .support-faqs
+- .faq-item, .faq-question, .faq-answer
+- .support-contact, .support-contact-card
+- .support-contact-info, .contact-item
+- .modal-overlay, .modal-content
+
+
+- .modal-header, .modal-body, .modal-footer
+
+**Transactions Page:**
+- .transaction-filters, .transactions-section
+- .transactions-list, .transaction-item
+- .transaction-left/right, .transaction-icon
+- .transaction-info, .transaction-asset
+- .transaction-date, .transaction-right
+- .transaction-amount, .transaction-value
+- .transaction-status, .export-section
+- .export-button
+
+**Reports Page:**
+- .generate-report, .generate-report-card
+- .generate-icon, .generate-info
+- .generate-button, .reports-section
+
+I'll continue expanding the styling for the reports section, focusing on creating consistent and visually appealing design elements across all pages. The goal is to develop a cohesive visual language that enhances user experience and maintains a professional interface.
 

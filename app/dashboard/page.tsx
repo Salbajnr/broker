@@ -7,6 +7,7 @@ import PortfolioChart from "@/components/PortfolioChart";
 import QuickActionsCard from "@/components/QuickActionsCard";
 import ListRow from "@/components/ListRow";
 import BottomNav from "@/components/BottomNav";
+import Sidebar from "@/components/Sidebar";
 import { useAuth } from "@/contexts/AuthContext";
 
 // Portfolio data - in a real app, this would come from an API
@@ -80,6 +81,7 @@ export default function DashboardPage() {
   const { theme } = useTheme();
   const [isClient, setIsClient] = React.useState(false);
   const [activeRange, setActiveRange] = React.useState("1D");
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   React.useEffect(() => {
     setIsClient(true);
@@ -202,8 +204,14 @@ export default function DashboardPage() {
         </section>
       </div>
 
+      {/* SIDEBAR */}
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
       {/* BOTTOM NAVIGATION */}
-      <BottomNav />
+      <BottomNav 
+        onMenuClick={() => setIsSidebarOpen(true)} 
+        isMenuActive={isSidebarOpen} 
+      />
     </div>
   );
 }
