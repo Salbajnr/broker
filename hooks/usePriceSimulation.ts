@@ -16,6 +16,7 @@ export interface MarketData {
   volume24h: number;
   high24h: number;
   low24h: number;
+  iconSrc?: string;
 }
 
 // Volatility configuration for each coin
@@ -158,5 +159,20 @@ export function getCoinColor(symbol: string): string {
     DOT: "#E6007A",
   };
   return colors[symbol] || "#0f9d58";
+}
+
+// Get coin logo path
+export function getCoinLogo(symbol: string): string {
+  const logos: Record<string, string> = {
+    BTC: "/btc-logo.png",
+    ETH: "/eth-logo.png",
+    BNB: "/bnb-logo.png",
+    SOL: "/sol-logo.png",
+    XRP: "/xrp-logo.png",
+    ADA: "/ada-logo.png",
+    DOGE: "/doge-logo.png",
+    DOT: "/dot-logo.png",
+  };
+  return logos[symbol] || "";
 }
 

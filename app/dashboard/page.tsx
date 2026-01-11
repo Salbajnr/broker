@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import DashboardHeader from "@/components/DashboardHeader";
 import PortfolioChart from "@/components/PortfolioChart";
 import QuickActionsCard from "@/components/QuickActionsCard";
@@ -71,29 +72,29 @@ const allocationData = [
 
 // Top positions
 const topPositions = [
-  { icon: "btc" as const, name: "Bitcoin", label: "BTC · Spot", amount: "0,0000 BTC", pill: "-1,2%", negative: true },
-  { icon: "eth" as const, name: "Ethereum", label: "ETH · Spot", amount: "0,0000 ETH", pill: "0,0%", negative: false },
-  { icon: "bnb" as const, name: "Binance Coin", label: "BNB · Spot", amount: "0,0000 BNB", pill: "+2,4%", negative: false },
-  { icon: "sol" as const, name: "Solana", label: "SOL · Spot", amount: "0,0000 SOL", pill: "-0,8%", negative: true },
-  { icon: "xrp" as const, name: "Ripple", label: "XRP · Spot", amount: "0,0000 XRP", pill: "+1,5%", negative: false },
-  { icon: "ada" as const, name: "Cardano", label: "ADA · Spot", amount: "0,0000 ADA", pill: "-3,2%", negative: true },
+  { iconSrc: "/btc-logo.png", name: "Bitcoin", label: "BTC · Spot", amount: "0,0000 BTC", pill: "-1,2%", negative: true },
+  { iconSrc: "/eth-logo.png", name: "Ethereum", label: "ETH · Spot", amount: "0,0000 ETH", pill: "0,0%", negative: false },
+  { iconSrc: "/bnb-logo.png", name: "Binance Coin", label: "BNB · Spot", amount: "0,0000 BNB", pill: "+2,4%", negative: false },
+  { iconSrc: "/sol-logo.png", name: "Solana", label: "SOL · Spot", amount: "0,0000 SOL", pill: "-0,8%", negative: true },
+  { iconSrc: "/xrp-logo.png", name: "Ripple", label: "XRP · Spot", amount: "0,0000 XRP", pill: "+1,5%", negative: false },
+  { iconSrc: "/ada-logo.png", name: "Cardano", label: "ADA · Spot", amount: "0,0000 ADA", pill: "-3,2%", negative: true },
 ];
 
 // Currency list
 const currencies = [
-  { name: "Bitcoin", symbol: "BTC", price: "66.234,50 €", change: "2,34%", changeValue: "+1.512 €", marketCap: "1,3 B€", iconColor: "#F7931A", isPositive: true },
-  { name: "Ethereum", symbol: "ETH", price: "3.261,80 €", change: "1,87%", changeValue: "+59,80 €", marketCap: "392 B€", iconColor: "#627EEA", isPositive: true },
-  { name: "Binance Coin", symbol: "BNB", price: "582,40 €", change: "4,21%", changeValue: "+23,50 €", marketCap: "87 B€", iconColor: "#F3BA2F", isPositive: true },
-  { name: "Solana", symbol: "SOL", price: "156,72 €", change: "-0,94%", changeValue: "-1,49 €", marketCap: "72 B€", iconColor: "#9945FF", isPositive: false },
-  { name: "Ripple", symbol: "XRP", price: "0,62 €", change: "3,45%", changeValue: "+0,02 €", marketCap: "35 B€", iconColor: "#23292F", isPositive: true },
-  { name: "Cardano", symbol: "ADA", price: "0,38 €", change: "-2,12%", changeValue: "-0,01 €", marketCap: "13 B€", iconColor: "#0033AD", isPositive: false },
+  { name: "Bitcoin", symbol: "BTC", price: "66.234,50 €", change: "2,34%", changeValue: "+1.512 €", marketCap: "1,3 B€", iconSrc: "/btc-logo.png", isPositive: true },
+  { name: "Ethereum", symbol: "ETH", price: "3.261,80 €", change: "1,87%", changeValue: "+59,80 €", marketCap: "392 B€", iconSrc: "/eth-logo.png", isPositive: true },
+  { name: "Binance Coin", symbol: "BNB", price: "582,40 €", change: "4,21%", changeValue: "+23,50 €", marketCap: "87 B€", iconSrc: "/bnb-logo.png", isPositive: true },
+  { name: "Solana", symbol: "SOL", price: "156,72 €", change: "-0,94%", changeValue: "-1,49 €", marketCap: "72 B€", iconSrc: "/sol-logo.png", isPositive: false },
+  { name: "Ripple", symbol: "XRP", price: "0,62 €", change: "3,45%", changeValue: "+0,02 €", marketCap: "35 B€", iconSrc: "/xrp-logo.png", isPositive: true },
+  { name: "Cardano", symbol: "ADA", price: "0,38 €", change: "-2,12%", changeValue: "-0,01 €", marketCap: "13 B€", iconSrc: "/ada-logo.png", isPositive: false },
 ];
 
 // Watchlist
 const watchlist = [
-  { name: "Bitcoin", symbol: "BTC", price: "66.234,50 €", change: "+2,34%", isPositive: true, iconColor: "#F7931A" },
-  { name: "Ethereum", symbol: "ETH", price: "3.261,80 €", change: "+1,87%", isPositive: true, iconColor: "#627EEA" },
-  { name: "Solana", symbol: "SOL", price: "156,72 €", change: "-0,94%", isPositive: false, iconColor: "#9945FF" },
+  { name: "Bitcoin", symbol: "BTC", price: "66.234,50 €", change: "+2,34%", isPositive: true, iconSrc: "/btc-logo.png" },
+  { name: "Ethereum", symbol: "ETH", price: "3.261,80 €", change: "+1,87%", isPositive: true, iconSrc: "/eth-logo.png" },
+  { name: "Solana", symbol: "SOL", price: "156,72 €", change: "-0,94%", isPositive: false, iconSrc: "/sol-logo.png" },
 ];
 
 // Market overview
@@ -286,7 +287,7 @@ export default function DashboardPage() {
               change={currency.change}
               changeValue={currency.changeValue}
               marketCap={currency.marketCap}
-              iconColor={currency.iconColor}
+              iconSrc={currency.iconSrc}
               isPositive={currency.isPositive}
             />
           ))}
@@ -306,11 +307,8 @@ export default function DashboardPage() {
             {watchlist.map((item, index) => (
               <div key={index} className="watchlist-item">
                 <div className="watchlist-left">
-                  <div
-                    className="watchlist-asset"
-                    style={{ background: item.iconColor }}
-                  >
-                    {item.symbol.slice(0, 2)}
+                  <div className="watchlist-asset">
+                    <Image src={item.iconSrc} alt={item.name} width={24} height={24} />
                   </div>
                   <div className="watchlist-name">{item.name}</div>
                 </div>
@@ -346,7 +344,7 @@ export default function DashboardPage() {
           {topPositions.map((item, index) => (
             <ListRow
               key={index}
-              icon={item.icon}
+              iconSrc={item.iconSrc}
               name={item.name}
               label={item.label}
               amount={item.amount}

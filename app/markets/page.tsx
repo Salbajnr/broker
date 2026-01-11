@@ -1,20 +1,21 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
-import { usePriceSimulation, MarketData, formatPrice, formatCompact, getCoinColor } from "@/hooks/usePriceSimulation";
+import { usePriceSimulation, MarketData, formatPrice, formatCompact, getCoinColor, getCoinLogo } from "@/hooks/usePriceSimulation";
 
-// Enhanced market data
+// Market data with icon paths
 const initialMarketData: MarketData[] = [
-  { id: "btc", name: "Bitcoin", symbol: "BTC", price: 43250.00, change24h: 2.45, marketCap: 842000000000, volume24h: 28400000000, high24h: 43800, low24h: 42100 },
-  { id: "eth", name: "Ethereum", symbol: "ETH", price: 2280.50, change24h: 1.82, marketCap: 274000000000, volume24h: 12100000000, high24h: 2320, low24h: 2180 },
-  { id: "bnb", name: "Binance Coin", symbol: "BNB", price: 312.40, change24h: -0.54, marketCap: 48200000000, volume24h: 1400000000, high24h: 318, low24h: 308 },
-  { id: "sol", name: "Solana", symbol: "SOL", price: 98.75, change24h: 4.21, marketCap: 42100000000, volume24h: 3800000000, high24h: 102, low24h: 92 },
-  { id: "xrp", name: "Ripple", symbol: "XRP", price: 0.62, change24h: 0.89, marketCap: 33800000000, volume24h: 1200000000, high24h: 0.64, low24h: 0.60 },
-  { id: "ada", name: "Cardano", symbol: "ADA", price: 0.52, change24h: -1.23, marketCap: 18200000000, volume24h: 456000000, high24h: 0.54, low24h: 0.50 },
-  { id: "doge", name: "Dogecoin", symbol: "DOGE", price: 0.082, change24h: 5.67, marketCap: 11800000000, volume24h: 2100000000, high24h: 0.088, low24h: 0.075 },
-  { id: "dot", name: "Polkadot", symbol: "DOT", price: 7.85, change24h: -2.34, marketCap: 10200000000, volume24h: 234000000, high24h: 8.20, low24h: 7.50 },
+  { id: "btc", name: "Bitcoin", symbol: "BTC", price: 43250.00, change24h: 2.45, marketCap: 842000000000, volume24h: 28400000000, high24h: 43800, low24h: 42100, iconSrc: "/btc-logo.png" },
+  { id: "eth", name: "Ethereum", symbol: "ETH", price: 2280.50, change24h: 1.82, marketCap: 274000000000, volume24h: 12100000000, high24h: 2320, low24h: 2180, iconSrc: "/eth-logo.png" },
+  { id: "bnb", name: "Binance Coin", symbol: "BNB", price: 312.40, change24h: -0.54, marketCap: 48200000000, volume24h: 1400000000, high24h: 318, low24h: 308, iconSrc: "/bnb-logo.png" },
+  { id: "sol", name: "Solana", symbol: "SOL", price: 98.75, change24h: 4.21, marketCap: 42100000000, volume24h: 3800000000, high24h: 102, low24h: 92, iconSrc: "/sol-logo.png" },
+  { id: "xrp", name: "Ripple", symbol: "XRP", price: 0.62, change24h: 0.89, marketCap: 33800000000, volume24h: 1200000000, high24h: 0.64, low24h: 0.60, iconSrc: "/xrp-logo.png" },
+  { id: "ada", name: "Cardano", symbol: "ADA", price: 0.52, change24h: -1.23, marketCap: 18200000000, volume24h: 456000000, high24h: 0.54, low24h: 0.50, iconSrc: "/ada-logo.png" },
+  { id: "doge", name: "Dogecoin", symbol: "DOGE", price: 0.082, change24h: 5.67, marketCap: 11800000000, volume24h: 2100000000, high24h: 0.088, low24h: 0.075, iconSrc: "/doge-logo.png" },
+  { id: "dot", name: "Polkadot", symbol: "DOT", price: 7.85, change24h: -2.34, marketCap: 10200000000, volume24h: 234000000, high24h: 8.20, low24h: 7.50, iconSrc: "/dot-logo.png" },
 ];
 
 // Market categories
@@ -244,9 +245,13 @@ export default function MarketsPage() {
                     className="asset-icon" 
                     style={{ background: getCoinColor(market.symbol) }}
                   >
-                    <span style={{ color: "#fff", fontWeight: 700, fontSize: 12 }}>
-                      {market.symbol.slice(0, 2)}
-                    </span>
+                    {market.iconSrc ? (
+                      <Image src={market.iconSrc} alt={market.name} width={20} height={20} style={{ borderRadius: '50%' }} />
+                    ) : (
+                      <span style={{ color: "#fff", fontWeight: 700, fontSize: 12 }}>
+                        {market.symbol.slice(0, 2)}
+                      </span>
+                    )}
                   </div>
                   <div className="asset-info">
                     <span className="asset-name">{market.name}</span>
@@ -349,9 +354,13 @@ export default function MarketsPage() {
                   className="asset-icon" 
                   style={{ background: getCoinColor(selectedCoin.symbol), width: 44, height: 44 }}
                 >
-                  <span style={{ color: "#fff", fontWeight: 700 }}>
-                    {selectedCoin.symbol.slice(0, 2)}
-                  </span>
+                  {selectedCoin.iconSrc ? (
+                    <Image src={selectedCoin.iconSrc} alt={selectedCoin.name} width={32} height={32} style={{ borderRadius: '50%' }} />
+                  ) : (
+                    <span style={{ color: "#fff", fontWeight: 700 }}>
+                      {selectedCoin.symbol.slice(0, 2)}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <h3 style={{ margin: 0, fontSize: 18 }}>{selectedCoin.name}</h3>
