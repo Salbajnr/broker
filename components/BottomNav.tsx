@@ -4,22 +4,43 @@ import * as React from "react";
 import Link from "next/link";
 
 interface NavItemProps {
-  href: string;
+  href?: string;
   icon: React.ReactNode;
   label: string;
   active?: boolean;
+  onClick?: () => void;
+  isMenu?: boolean;
 }
 
-function NavItem({ href, icon, label, active }: NavItemProps) {
-  return (
-    <Link href={href} className={`nav-item ${active ? "active" : ""}`}>
-      <div className="nav-icon">{icon}</div>
+function NavItem({ href, icon, label, active, onClick, isMenu }: NavItemProps) {
+  const content = (
+    <>
+      <div className={`nav-icon ${isMenu ? "nav-icon-menu" : ""}`}>{icon}</div>
       <span>{label}</span>
-    </Link>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className={`nav-item ${active ? "active" : ""}`}>
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <button className={`nav-item nav-button ${active ? "active" : ""}`} onClick={onClick}>
+      {content}
+    </button>
   );
 }
 
-export default function BottomNav() {
+interface BottomNavProps {
+  onMenuClick?: () => void;
+  isMenuActive?: boolean;
+}
+
+export default function BottomNav({ onMenuClick, isMenuActive }: BottomNavProps) {
   const [activePath, setActivePath] = React.useState("/dashboard");
 
   React.useEffect(() => {
@@ -80,15 +101,17 @@ export default function BottomNav() {
           active={activePath === "/markets"}
         />
         <NavItem
-          href="/profile"
           icon={
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           }
-          label="Profile"
-          active={activePath === "/profile"}
+          label="Menu"
+          active={isMenuActive}
+          onClick={onMenuClick}
+          isMenu
         />
       </div>
     </nav>

@@ -1,13 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { useTheme } from "next-themes";
 import DashboardHeader from "@/components/DashboardHeader";
 import PortfolioChart from "@/components/PortfolioChart";
 import QuickActionsCard from "@/components/QuickActionsCard";
 import ListRow from "@/components/ListRow";
 import BottomNav from "@/components/BottomNav";
+import Sidebar from "@/components/Sidebar";
 import { useAuth } from "@/contexts/AuthContext";
+import CurrencyCard from "@/components/CurrencyCard";
+import MarketOverview from "@/components/MarketOverview";
+import TransactionsList from "@/components/TransactionsList";
 
 // Portfolio data - in a real app, this would come from an API
 const portfolioData = {
@@ -17,7 +20,7 @@ const portfolioData = {
   changePeriod: "in 1 Tag",
 };
 
-// Quick actions data
+// Enhanced Quick actions data
 const quickActions = [
   {
     title: "Verfügbares Guthaben",
@@ -44,6 +47,26 @@ const quickActions = [
   },
 ];
 
+// Portfolio Actions (Buy, Sell, Swap, Deposit)
+const portfolioActions = [
+  {
+    icon: "buy",
+    label: "Kaufen",
+  },
+  {
+    icon: "sell",
+    label: "Verkaufen",
+  },
+  {
+    icon: "swap",
+    label: "Tauschen",
+  },
+  {
+    icon: "deposit",
+    label: "Einzahlen",
+  },
+];
+
 // Allocation data
 const allocationData = [
   {
@@ -55,7 +78,7 @@ const allocationData = [
   },
 ];
 
-// Top positions data
+// Enhanced Top positions data
 const topPositions = [
   {
     icon: "btc" as const,
@@ -73,13 +96,123 @@ const topPositions = [
     pill: "0,0%",
     negative: false,
   },
+  {
+    icon: "bnb" as const,
+    name: "Binance Coin",
+    label: "BNB · Spot",
+    amount: "0,0000 BNB",
+    pill: "+2,4%",
+    negative: false,
+  },
+  {
+    icon: "sol" as const,
+    name: "Solana",
+    label: "SOL · Spot",
+    amount: "0,0000 SOL",
+    pill: "-0,8%",
+    negative: true,
+  },
+  {
+    icon: "xrp" as const,
+    name: "Ripple",
+    label: "XRP · Spot",
+    amount: "0,0000 XRP",
+    pill: "+1,5%",
+    negative: false,
+  },
+  {
+    icon: "ada" as const,
+    name: "Cardano",
+    label: "ADA · Spot",
+    amount: "0,0000 ADA",
+    pill: "-3,2%",
+    negative: true,
+  },
 ];
+
+// Currency list data
+const currencies = [
+  {
+    name: "Bitcoin",
+    symbol: "BTC",
+    price: "66.234,50 €",
+    change: "2,34%",
+    changeValue: "+1.512 €",
+    marketCap: "1,3 B€",
+    iconColor: "#F7931A",
+  },
+  {
+    name: "Ethereum",
+    symbol: "ETH",
+    price: "3.261,80 €",
+    change: "1,87%",
+    changeValue: "+59,80 €",
+    marketCap: "392 B€",
+    iconColor: "#627EEA",
+  },
+  {
+    name: "Binance Coin",
+    symbol: "BNB",
+    price: "582,40 €",
+    change: "4,21%",
+    changeValue: "+23,50 €",
+    marketCap: "87 B€",
+    iconColor: "#F3BA2F",
+  },
+  {
+    name: "Solana",
+    symbol: "SOL",
+    price: "156,72 €",
+    change: "-0,94%",
+    changeValue: "-1,49 €",
+    marketCap: "72 B€",
+    iconColor: "#9945FF",
+  },
+  {
+    name: "Ripple",
+    symbol: "XRP",
+    price: "0,62 €",
+    change: "3,45%",
+    changeValue: "+0,02 €",
+    marketCap: "35 B€",
+    iconColor: "#23292F",
+  },
+  {
+    name: "Cardano",
+    symbol: "ADA",
+    price: "0,38 €",
+    change: "-2,12%",
+    changeValue: "-0,01 €",
+    marketCap: "13 B€",
+    iconColor: "#0033AD",
+  },
+];
+
+// Watchlist data
+const watchlist = [
+  { name: "Bitcoin", symbol: "BTC", price: "66.234,50 €", change: "+2,34%", isPositive: true, iconColor: "#F7931A" },
+  { name: "Ethereum", symbol: "ETH", price: "3.261,80 €", change: "+1,87%", isPositive: true, iconColor: "#627EEA" },
+  { name: "Solana", symbol: "SOL", price: "156,72 €", change: "-0,94%", isPositive: false, iconColor: "#9945FF" },
+];
+
+// Market overview data
+const marketOverviewData = {
+  marketCap: "2,45 B€",
+  marketCapChange: "+2,3%",
+  volume24h: "98,5 Mrd. €",
+  volumeChange: "-5,8%",
+  topGainer: { name: "SEI", symbol: "SEI", change: "+18,4%" },
+  topLoser: { name: "ARB", symbol: "ARB", change: "-7,2%" },
+  btcDominance: "52,4%",
+  fearGreedIndex: 72,
+  fearGreedLabel: "Gier",
+};
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
-  const { theme } = useTheme();
   const [isClient, setIsClient] = React.useState(false);
   const [activeRange, setActiveRange] = React.useState("1D");
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   React.useEffect(() => {
     setIsClient(true);
@@ -142,6 +275,43 @@ export default function DashboardPage() {
           </div>
         </section>
 
+        {/* PORTFOLIO ACTIONS */}
+        <h3 className="section-title">Portfolio verwalten</h3>
+        <section className="portfolio-actions">
+          {portfolioActions.map((action, index) => (
+            <div key={index} className="action-btn">
+              <div className={`action-icon ${action.icon}`}>
+                {action.icon === "buy" && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 5v14M5 12h14" />
+                    <circle cx="12" cy="12" r="10" />
+                  </svg>
+                )}
+                {action.icon === "sell" && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12h14" />
+                    <circle cx="12" cy="12" r="10" />
+                  </svg>
+                )}
+                {action.icon === "swap" && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17 1l4 4-4 4" />
+                    <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                    <path d="M7 23l-4-4 4-4" />
+                    <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                  </svg>
+                )}
+                {action.icon === "deposit" && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 19V5M19 12l-7 7-7-7" />
+                  </svg>
+                )}
+              </div>
+              <span>{action.label}</span>
+            </div>
+          ))}
+        </section>
+
         {/* QUICK ACTIONS */}
         <h3 className="section-title">Aktionen</h3>
         <section className="cards">
@@ -156,6 +326,75 @@ export default function DashboardPage() {
               href={action.href}
             />
           ))}
+        </section>
+
+        {/* MARKET OVERVIEW */}
+        <MarketOverview
+          marketCap={marketOverviewData.marketCap}
+          marketCapChange={marketOverviewData.marketCapChange}
+          volume24h={marketOverviewData.volume24h}
+          volumeChange={marketOverviewData.volumeChange}
+          topGainer={marketOverviewData.topGainer}
+          topLoser={marketOverviewData.topLoser}
+          btcDominance={marketOverviewData.btcDominance}
+          fearGreedIndex={marketOverviewData.fearGreedIndex}
+          fearGreedLabel={marketOverviewData.fearGreedLabel}
+        />
+
+        {/* CURRENCY LIST */}
+        <section className="currency-list">
+          <div className="currency-list-header">
+            <span className="currency-list-title">Kurse</span>
+            <a href="/markets" className="view-all-currencies">
+              Alle anzeigen →
+            </a>
+          </div>
+          {currencies.map((currency, index) => (
+            <CurrencyCard
+              key={index}
+              name={currency.name}
+              symbol={currency.symbol}
+              price={currency.price}
+              change={currency.change}
+              changeValue={currency.changeValue}
+              marketCap={currency.marketCap}
+              iconColor={currency.iconColor}
+              isPositive={parseFloat(currency.change) >= 0}
+            />
+          ))}
+        </section>
+
+        {/* WATCHLIST */}
+        <section className="watchlist-section">
+          <div className="watchlist-header">
+            <h3 className="section-title" style={{ marginTop: 0 }}>
+              <svg className="watchlist-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+              Watchlist
+            </h3>
+          </div>
+          <div className="watchlist-items">
+            {watchlist.map((item, index) => (
+              <div key={index} className="watchlist-item">
+                <div className="watchlist-left">
+                  <div
+                    className="watchlist-asset"
+                    style={{ background: item.iconColor }}
+                  >
+                    {item.symbol.slice(0, 2)}
+                  </div>
+                  <div className="watchlist-name">{item.name}</div>
+                </div>
+                <div className="watchlist-right">
+                  <div className="watchlist-price">{item.price}</div>
+                  <div className={`watchlist-change ${item.isPositive ? "positive" : "negative"}`}>
+                    {item.change}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* ALLOCATION */}
@@ -190,20 +429,17 @@ export default function DashboardPage() {
         </section>
 
         {/* RECENT ACTIVITY */}
-        <h3 className="section-title">Letzte Aktivität</h3>
-        <section className="list-card">
-          <ListRow
-            icon="circle"
-            name="Keine Trades"
-            label="Hier erscheinen deine letzten Aktivitäten"
-            amount=""
-            pill="Live"
-          />
-        </section>
+        <TransactionsList maxItems={4} />
       </div>
 
+      {/* SIDEBAR */}
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
       {/* BOTTOM NAVIGATION */}
-      <BottomNav />
+      <BottomNav
+        onMenuClick={() => setIsSidebarOpen(true)}
+        isMenuActive={isSidebarOpen}
+      />
     </div>
   );
 }

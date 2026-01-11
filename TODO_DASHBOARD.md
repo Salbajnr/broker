@@ -1,36 +1,60 @@
-# Dashboard Redesign TODO
+# Dashboard Enhancement Plan
 
-## Phase 1: Component Creation
-- [x] Create ThemeToggle component with sun/moon icons
-- [x] Create BottomNav component with professional SVG icons
-- [x] Create PortfolioChart component with animated SVG line chart
-- [x] Create QuickActionsCard component
-- [x] Create ListRow component for allocation/positions
-- [x] Create DashboardHeader component with user name
+## Task: Populate dashboard with more content and attractive displays
 
-## Phase 2: Dashboard Page
-- [x] Rewrite app/dashboard/page.tsx with new design
-- [x] Display user's name from AuthContext
-- [x] Integrate theme toggle
+### Files to Modify:
+1. `/workspaces/broker/app/dashboard/page.tsx` - Main dashboard page
+2. `/workspaces/broker/components/CurrencyCard.tsx` - New component for currency display
+3. `/workspaces/broker/components/MarketOverview.tsx` - New component for market overview
+4. `/workspaces/broker/components/TransactionsList.tsx` - New component for transactions
 
-## Phase 3: Styling
-- [x] Add custom CSS variables to globals.css
-- [x] Implement glassmorphism effects
-- [x] Add smooth animations
-- [x] Add dark mode support
+### Changes to Implement:
 
-## Phase 4: Testing
-- [x] Verify no TypeScript errors - Build successful ✓
-- [ ] Test theme toggle functionality
-- [ ] Verify user name displays correctly
+## Phase 1: Quick Actions Expansion
+- [ ] Add more quick action cards (Buy, Sell, Swap, Deposit, Withdraw, Staking)
+- [ ] Add icons for each action
+- [ ] Maintain 2-column grid layout
 
-## Completed Changes:
-✓ User's name displays instead of "BITPANDA PRO"
-✓ Theme toggle button replaces sync button with proper SVG icons
-✓ All icons are professional SVG vectors (no emojis)
-✓ Full glassmorphism design with soft shadows
-✓ Dark mode support with CSS custom properties
-✓ Mobile-first responsive design
-✓ Smooth animations and transitions
-✓ Bottom navigation bar with active states
+## Phase 2: Market Overview Section
+- [ ] Add market overview section with key metrics
+- [ ] Display: Market Cap, 24h Volume, Top Gainer, Top Loser
+- [ ] Professional card design
+
+## Phase 3: Currency List Section (Main Feature)
+- [ ] Create CurrencyCard component
+- [ ] Display popular cryptocurrencies:
+  - Bitcoin (BTC)
+  - Ethereum (ETH)
+  - Binance Coin (BNB)
+  - Solana (SOL)
+  - Ripple (XRP)
+  - Cardano (ADA)
+- [ ] Show: Current price, 24h change %, market cap
+- [ ] Add mini sparkline charts for each currency
+
+## Phase 4: Expand Top Positions
+- [ ] Add more positions to the list (BNB, SOL, XRP, ADA)
+- [ ] Include amount and value for each
+- [ ] Add positive/negative indicators
+
+## Phase 5: Add Watchlist Section
+- [ ] Quick access to favorite assets
+- [ ] Simple list with price and change
+
+## Phase 6: Add Recent Transactions
+- [ ] Expand the activity section with actual transaction types
+- [ ] Add: Buy, Sell, Deposit, Withdrawal, Transfer
+
+### Design Guidelines:
+- Maintain Bitpanda green color scheme (#0f9d58, #2cec9a)
+- Keep glassmorphism effects
+- Consistent border-radius (22px-26px)
+- Mobile-responsive design
+- Dark mode support
+
+### Testing:
+- [ ] Verify all cards render correctly
+- [ ] Test dark mode compatibility
+- [ ] Ensure responsive layout on mobile
+- [ ] Check all icons and images load properly
 
