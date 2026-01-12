@@ -23,13 +23,16 @@ export default function CurrencyCard({
   changeValue,
   marketCap,
   iconSrc,
-  iconColor = "#0f9d58",
+  iconColor,
   isPositive = true,
 }: CurrencyCardProps) {
+  // Determine background color: use iconColor if provided, otherwise use a default
+  const bgColor = iconColor || "#0f9d58";
+
   return (
     <div className="currency-card">
       <div className="currency-left">
-        <div className="currency-icon" style={{ background: iconColor }}>
+        <div className="currency-icon" style={{ background: bgColor }}>
           {iconSrc ? (
             <Image src={iconSrc} alt={name} width={24} height={24} />
           ) : (
