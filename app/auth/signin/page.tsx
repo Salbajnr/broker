@@ -54,8 +54,8 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-lg border-gray-200">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      <Card className="w-full max-w-sm sm:max-w-md shadow-lg border-gray-200">
         <CardHeader className="space-y-1 text-center pb-6">
           <div className="w-16 h-16 mx-auto mb-4">
             <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
@@ -68,7 +68,7 @@ export default function SignInPage() {
             Sign in to your Bitpanda Pro account
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           {error && (
             <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-md mb-4">
               {error}
