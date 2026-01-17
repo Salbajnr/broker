@@ -56,7 +56,12 @@ export default function RootLayout({
     <html lang="en" className={`${inter.className}`} suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning>
         <AuthProvider>
-          <ThemeProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
             {children}
           </ThemeProvider>
         </AuthProvider>

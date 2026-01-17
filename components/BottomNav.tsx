@@ -50,7 +50,7 @@ export default function BottomNav({ onMenuClick, isMenuActive }: BottomNavProps)
   }, []);
 
   return (
-    <nav className="nav">
+    <nav className="nav hide-on-desktop">
       <div className="nav-inner">
         <NavItem
           href="/dashboard"

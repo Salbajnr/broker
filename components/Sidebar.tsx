@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import ThemeToggle from "./ThemeToggle";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -91,7 +92,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { user, signOut } = useAuth();
   const sidebarRef = React.useRef<HTMLDivElement>(null);
 
-  // Handle click outside to close
+  // Handle click outside to close (mobile only)
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
@@ -101,8 +102,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
-      // Prevent body scroll when sidebar is open
-      document.body.style.overflow = "hidden";
+      // Prevent body scroll when sidebar is open on mobile
+      if (window.innerWidth < 1024) {
+        document.body.style.overflow = "hidden";
+      }
     }
 
     return () => {
@@ -139,70 +142,143 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     return "User";
   }, [user]);
 
-  if (!isOpen) return null;
+  // Don't render on mobile if closed
+  if (!isOpen && typeof window !== "undefined" && window.innerWidth < 1024) {
+    return null;
+  }
 
-  return (
-    <>
-      {/* Backdrop Overlay */}
-      <div className="sidebar-overlay" onClick={onClose} />
-
-      {/* Sidebar */}
-      <aside className="sidebar" ref={sidebarRef}>
-        {/* Sidebar Header */}
-        <div className="sidebar-header">
-          <div className="sidebar-user">
-            <div className="sidebar-avatar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </div>
-            <div className="sidebar-user-info">
-              <span className="sidebar-user-name">{userName}</span>
-              <span className="sidebar-user-email">{user?.email || "user@example.com"}</span>
-            </div>
+  // Desktop sidebar - always rendered but conditionally visible
+  const desktopSidebar = (
+    <aside className="sidebar-desktop" ref={sidebarRef as React.RefObject<HTMLDivElement>}>
+      {/* Sidebar Header */}
+      <div className="sidebar-header">
+        <div className="sidebar-user">
+          <div className="sidebar-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
           </div>
-          <button className="sidebar-close" onClick={onClose} aria-label="Close menu">
+          <div className="sidebar-user-info">
+            <span className="sidebar-user-name">{userName}</span>
+            <span className="sidebar-user-email">{user?.email || "user@example.com"}</span>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <ThemeToggle />
+          <button className="sidebar-close sidebar-close-desktop" onClick={onClose} aria-label="Close menu">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
+      </div>
 
-        {/* Menu Items */}
-        <nav className="sidebar-nav">
-          <ul className="sidebar-menu">
-            {menuItems.map((item, index) => (
-              <li key={index}>
-                <Link href={item.href} className="sidebar-menu-item" onClick={onClose}>
-                  <span className="sidebar-menu-icon">{item.icon}</span>
-                  <span className="sidebar-menu-label">{item.label}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+      {/* Menu Items */}
+      <nav className="sidebar-nav">
+        <ul className="sidebar-menu">
+          {menuItems.map((item, index) => (
+            <li key={index}>
+              <Link href={item.href} className="sidebar-menu-item" onClick={onClose}>
+                <span className="sidebar-menu-icon">{item.icon}</span>
+                <span className="sidebar-menu-label">{item.label}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
-        {/* Logout Button */}
-        <div className="sidebar-footer">
-          <button
-            className="sidebar-logout"
-            onClick={() => {
-              onClose();
-              signOut();
-            }}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
-            <span>Log Out</span>
-          </button>
-        </div>
-      </aside>
-    </>
+      {/* Logout Button */}
+      <div className="sidebar-footer">
+        <button
+          className="sidebar-logout"
+          onClick={() => {
+            onClose();
+            signOut();
+          }}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          <span>Log Out</span>
+        </button>
+      </div>
+    </aside>
   );
+
+  // Mobile slide-in sidebar
+  if (typeof window !== "undefined" && window.innerWidth < 1024) {
+    return (
+      <>
+        {/* Backdrop Overlay */}
+        <div className="sidebar-overlay" onClick={onClose} />
+
+        {/* Mobile Sidebar */}
+        <aside className="sidebar" ref={sidebarRef}>
+          {/* Sidebar Header */}
+          <div className="sidebar-header">
+            <div className="sidebar-user">
+              <div className="sidebar-avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+              <div className="sidebar-user-info">
+                <span className="sidebar-user-name">{userName}</span>
+                <span className="sidebar-user-email">{user?.email || "user@example.com"}</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <ThemeToggle />
+              <button className="sidebar-close" onClick={onClose} aria-label="Close menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Menu Items */}
+          <nav className="sidebar-nav">
+            <ul className="sidebar-menu">
+              {menuItems.map((item, index) => (
+                <li key={index}>
+                  <Link href={item.href} className="sidebar-menu-item" onClick={onClose}>
+                    <span className="sidebar-menu-icon">{item.icon}</span>
+                    <span className="sidebar-menu-label">{item.label}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Logout Button */}
+          <div className="sidebar-footer">
+            <button
+              className="sidebar-logout"
+              onClick={() => {
+                onClose();
+                signOut();
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              <span>Log Out</span>
+            </button>
+          </div>
+        </aside>
+      </>
+    );
+  }
+
+  return desktopSidebar;
 }
 

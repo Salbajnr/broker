@@ -898,10 +898,298 @@ h2 {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Responsive Dashboard App Container */
 .dashboard-app {
-  max-width: 480px;
+  width: 100%;
   margin: 0 auto;
   padding: 12px 14px 90px;
+  transition: max-width 0.3s ease, padding 0.3s ease;
+}
+
+/* Mobile: single column, full width with padding */
+@media (max-width: 639px) {
+  .dashboard-app {
+    max-width: 100%;
+    padding: 12px 14px 90px;
+  }
+}
+
+/* Tablet: slightly wider */
+@media (min-width: 640px) and (max-width: 767px) {
+  .dashboard-app {
+    max-width: 100%;
+    padding: 16px 20px 100px;
+  }
+}
+
+/* Laptop: constrained but wider */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .dashboard-app {
+    max-width: 720px;
+    padding: 20px 24px 100px;
+  }
+}
+
+/* Desktop: even wider with side-by-side layout option */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .dashboard-app {
+    max-width: 900px;
+    padding: 24px 28px 24px;
+    padding-bottom: 24px;
+  }
+}
+
+/* Large Desktop: full content width */
+@media (min-width: 1280px) {
+  .dashboard-app {
+    max-width: 1100px;
+    padding: 28px 32px 28px;
+    padding-bottom: 28px;
+  }
+}
+
+/* Desktop Layout with Sidebar */
+@media (min-width: 1024px) {
+  .dashboard-layout {
+    display: flex;
+    gap: 24px;
+  }
+  
+  .dashboard-main {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .dashboard-sidebar {
+    width: 320px;
+    flex-shrink: 0;
+  }
+  
+  .hide-on-desktop {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   DESKTOP SIDEBAR STYLES
+   ============================================ */
+
+.sidebar-desktop {
+  width: 280px;
+  height: fit-content;
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+  position: sticky;
+  top: 16px;
+  overflow: hidden;
+}
+
+.sidebar-close-desktop {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .sidebar-desktop {
+    display: none;
+  }
+}
+
+/* ============================================
+   RESPONSIVE UTILITY CLASSES
+   ============================================ */
+
+/* Responsive padding for sections */
+.section-padding {
+  padding: 16px;
+}
+
+@media (min-width: 640px) {
+  .section-padding {
+    padding: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding: 24px;
+  }
+}
+
+/* Responsive grid for cards */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 640px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .cards-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+
+/* Responsive list layouts */
+.list-container {
+  background: var(--card);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .list-container {
+    border-radius: 22px;
+  }
+}
+
+/* Responsive header styles */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 10px 4px 4px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .page-header {
+    margin-bottom: 14px;
+    padding: 12px 6px 6px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-header {
+    margin-bottom: 16px;
+    padding: 16px 8px 8px;
+  }
+}
+
+/* Responsive card styles */
+.responsive-card {
+  background: var(--card);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  padding: 16px;
+  transition: all var(--transition-med);
+}
+
+@media (min-width: 640px) {
+  .responsive-card {
+    padding: 20px;
+    border-radius: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-card {
+    padding: 24px;
+    border-radius: 22px;
+  }
+}
+
+/* Responsive stat cards */
+.stat-card {
+  background: var(--card);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  padding: 12px;
+}
+
+@media (min-width: 640px) {
+  .stat-card {
+    padding: 14px;
+    border-radius: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .stat-card {
+    padding: 16px;
+    border-radius: 18px;
+  }
+}
+
+/* Responsive modal */
+.modal-responsive {
+  width: min(92%, 480px);
+  background: var(--color-neutrals-card-fill-primary);
+  border-radius: var(--radius-medium);
+  padding: var(--spacing-small);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  max-height: 90vh;
+  overflow: auto;
+}
+
+@media (min-width: 640px) {
+  .modal-responsive {
+    width: min(90%, 500px);
+    padding: var(--spacing-medium);
+    border-radius: var(--radius-large);
+  }
+}
+
+@media (min-width: 1024px) {
+  .modal-responsive {
+    width: min(85%, 560px);
+    padding: var(--spacing-large);
+  }
+}
+
+/* Hide elements on specific breakpoints */
+.hide-mobile {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .hide-mobile {
+    display: block;
+  }
+}
+
+.hide-tablet {
+  display: block;
+}
+
+@media (min-width: 640px) {
+  .hide-tablet {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hide-tablet {
+    display: block;
+  }
+}
+
+/* Responsive text sizes */
+.text-responsive {
+  font-size: 18px;
+}
+
+@media (min-width: 640px) {
+  .text-responsive {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-responsive {
+    font-size: 24px;
+  }
 }
 
 /* HEADER */

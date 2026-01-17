@@ -54,8 +54,8 @@ function OtpVerifyForm() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-lg border-gray-200">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      <Card className="w-full max-w-sm sm:max-w-md shadow-lg border-gray-200">
         <CardHeader className="space-y-1 text-center pb-6">
           <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
             <svg className="w-8 h-8 text-green-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +69,7 @@ function OtpVerifyForm() {
               : "We've sent a code to your email"}
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           {!success ? (
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
@@ -163,8 +163,8 @@ function OtpVerifyForm() {
 export default function OtpVerifyPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-white flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-lg border-gray-200">
+      <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <Card className="w-full max-w-sm sm:max-w-md shadow-lg border-gray-200">
           <CardHeader className="space-y-1 text-center pb-6">
             <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
               <svg className="w-8 h-8 text-green-800 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
